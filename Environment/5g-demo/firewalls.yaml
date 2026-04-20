@@ -1,0 +1,89 @@
+# AMF 专属防火墙
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: amf-firewall
+  namespace: default
+spec:
+  hosts:
+  - amf
+  http:
+  - match:
+    - headers:
+        X-Attack-Target:
+          exact: "amf"
+    fault:
+      abort:
+        percentage:
+          value: 0
+        httpStatus: 503
+    route:
+    - destination:
+        host: amf
+        port:
+          number: 80
+  - route:
+    - destination:
+        host: amf
+        port:
+          number: 80
+---
+# SMF 专属防火墙
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: smf-firewall
+  namespace: default
+spec:
+  hosts:
+  - smf
+  http:
+  - match:
+    - headers:
+        X-Attack-Target:
+          exact: "smf"
+    fault:
+      abort:
+        percentage:
+          value: 0
+        httpStatus: 503
+    route:
+    - destination:
+        host: smf
+        port:
+          number: 80
+  - route:
+    - destination:
+        host: smf
+        port:
+          number: 80
+---
+# UPF 专属防火墙
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: upf-firewall
+  namespace: default
+spec:
+  hosts:
+  - upf
+  http:
+  - match:
+    - headers:
+        X-Attack-Target:
+          exact: "upf"
+    fault:
+      abort:
+        percentage:
+          value: 0
+        httpStatus: 503
+    route:
+    - destination:
+        host: upf
+        port:
+          number: 80
+  - route:
+    - destination:
+        host: upf
+        port:
+          number: 80

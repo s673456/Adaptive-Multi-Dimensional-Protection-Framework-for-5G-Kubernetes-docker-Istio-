@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amf
+  namespace: default
+  labels:
+    app: amf
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: amf
+  template:
+    metadata:
+      labels:
+        app: amf
+    spec:
+      containers:
+      - name: http
+        image: nginx:alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: amf
+  namespace: default
+spec:
+  selector:
+    app: amf
+  ports:
+  - port: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smf
+  namespace: default
+  labels:
+    app: smf
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: smf
+  template:
+    metadata:
+      labels:
+        app: smf
+    spec:
+      containers:
+      - name: http
+        image: nginx:alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smf
+  namespace: default
+spec:
+  selector:
+    app: smf
+  ports:
+  - port: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upf
+  namespace: default
+  labels:
+    app: upf
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: upf
+  template:
+    metadata:
+      labels:
+        app: upf
+    spec:
+      containers:
+      - name: http
+        image: nginx:alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf
+  namespace: default
+spec:
+  selector:
+    app: upf
+  ports:
+  - port: 80

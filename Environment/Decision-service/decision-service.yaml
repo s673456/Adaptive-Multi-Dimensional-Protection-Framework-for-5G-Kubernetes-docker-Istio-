@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: decision-service
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: decision-service
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "patch"]
+- apiGroups: ["networking.istio.io"]
+  resources: ["virtualservices"]
+  verbs: ["get", "patch", "create", "delete"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "patch", "create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: decision-service
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: decision-service
+subjects:
+- kind: ServiceAccount
+  name: decision-service
+  namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decision-service
+  namespace: default
+  labels:
+    app: decision-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: decision-service
+  template:
+    metadata:
+      labels:
+        app: decision-service
+    spec:
+      serviceAccountName: decision-service
+      containers:
+      - name: decision
+        image: decision-service:online
+        imagePullPolicy: Never   # 使用 Minikube 本地镜像，如需从仓库拉取改为 IfNotPresent
+        env:
+        - name: DECISION_INTERVAL
+          value: "10"
+        - name: UPDATE_INTERVAL
+          value: "5"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
